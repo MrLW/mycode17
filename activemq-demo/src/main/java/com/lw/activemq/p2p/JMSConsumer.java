@@ -5,12 +5,14 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
+import javax.jms.ObjectMessage;
 import javax.jms.Queue;
 import javax.jms.Session;
-import javax.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
+
+import com.lw.activemq.pojo.Order;
 
 /**
  * @author liwen
@@ -32,22 +34,24 @@ public class JMSConsumer {
 					ActiveMQConnection.DEFAULT_PASSWORD, ActiveMQConnection.DEFAULT_BROKER_URL);
 			conn = connectionFactory.createConnection();
 			conn.start();
-			session = conn.createSession(true, Session.AUTO_ACKNOWLEDGE);
+			session = conn.createSession(true, Session.CLIENT_ACKNOWLEDGE);
+			// 创建队列,要么是Queue,要么是Topic
 			destination = session.createQueue("helloworld");
 			consumer = session.createConsumer(destination);
 			// 接收消息
-			/*
-			 * while (true) { TextMessage text = (TextMessage) consumer.receive(); if (text
-			 * != null) { System.out.println("consumer收到的消息:" + text.getText()); } else {
-			 * break; } }
-			 */
+
 			consumer.setMessageListener(new MessageListener() {
 
 				public void onMessage(Message message) {
-					TextMessage text = (TextMessage) message;
+					ObjectMessage obj = (ObjectMessage) message;
 					try {
-						String msg = text.getText();
-						System.out.println("consumer:" + msg);
+						Order object = (Order) obj.getObject();
+						System.out.println("consumer收到消息:" + object);
+					} catch (JMSException e) {
+						e.printStackTrace();
+					}
+					try {
+						message.acknowledge();
 					} catch (JMSException e) {
 						e.printStackTrace();
 					}
