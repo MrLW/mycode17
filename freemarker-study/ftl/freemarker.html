@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Insert title here</title>
+</head>
+<body>
+1、遍历对象<br>
+id:${person.id} name: ${person.name}<br>
+2、遍历List<br>
+<#list list as o>
+	${o.name}-->${o.age}
+</#list> <br>
+3、模板赋值
+<#assign x>世界太美了</#assign> ${x}<br>
+<#assign x><br>
+	<#list ["周一","周二","周三","周四","周五"] as n> ${n}
+	</#list>
+</#assign>
+</body>
+</html>
